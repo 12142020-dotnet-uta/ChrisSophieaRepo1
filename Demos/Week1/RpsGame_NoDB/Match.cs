@@ -15,10 +15,10 @@ namespace RpsGame_NoDB
 
         public List<Round> Rounds = new List<Round>();
 
-        private int userRoundWins;
+        //private int userRoundWins;
         public int UserRoundWins { get; set; }
 
-        private int botRoundWins;
+        //private int botRoundWins;
         public int BotRoundWins { get; set; }
         private int ties { get; set; }
 

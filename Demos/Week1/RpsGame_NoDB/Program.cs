@@ -39,23 +39,23 @@ namespace RpsGame_NoDB
                     break;
                 }
 
-                Console.WriteLine("----- Login -----");
+                Console.WriteLine("\n----- Login -----");
                 Console.Write("\nEnter first name: ");
                 string firstName = Console.ReadLine();
-                Console.Write("\nEnter last name:");
+                Console.Write("\nEnter last name: ");
                 string lastName = Console.ReadLine();
                 Player user = new Player(firstName, lastName);
 
                 if (!PlayerExists(user, players))
                 {
-                    Console.WriteLine("User created.");
+                    Console.WriteLine("\nUser created.");
                     players.Add(user);
                 }
 
 
                 while (true)
                 {
-                    Console.WriteLine("----- Game Menu -----");
+                    Console.WriteLine("\n----- Game Menu -----");
                     Console.WriteLine("\nPlease choose an option.");
                     Console.WriteLine("\t1. Play Game\n\t2. Logout");
                     if (!int.TryParse(Console.ReadLine(), out int gameMenuResponse) || gameMenuResponse < 1 || gameMenuResponse > 2)
@@ -67,6 +67,7 @@ namespace RpsGame_NoDB
                     {
                         break;
                     }
+
                     PlayGame();
 
                 }
@@ -76,15 +77,16 @@ namespace RpsGame_NoDB
                 void PlayGame()
                 {
                     Match match = new Match();
-
+                    rounds = new List<Round>();
+                    roundNumber = 1;
                     match.Bot = bot;
                     match.User = user;
 
                     while (true)
                     {
 
-                        Round round = new Round();
 
+                        Round round = new Round();
                         Choice userSelection;
                         int botSelection;
                         string userResponse;
@@ -175,15 +177,15 @@ namespace RpsGame_NoDB
                         if (match.UserRoundWins == 2 || match.BotRoundWins == 2)
                         {
                             matches.Add(match);
-                            Player winner = match.MatchWinner();
-                            Console.Write($"\nMatch winner: {winner.FirstName}");
+                            Console.Write($"\nMatch winner: {match.MatchWinner().FirstName}");
                             PrintStats();
 
-                            Console.WriteLine("\n\nWould you like to play again?\n\tType y for Yes\n\tType n for No\n");
+                            Console.WriteLine("\n\nWould you like to play another match?\n\tType y for Yes\n\tType n for No\n");
                             string playAgain = Console.ReadLine(); // User input and add into playAgain
                             if (playAgain.Equals("y", StringComparison.OrdinalIgnoreCase) || playAgain.Equals("yes", StringComparison.OrdinalIgnoreCase))
                             {
                                 match = new Match();
+                                rounds = new List<Round>();
                                 match.Bot = bot;
                                 match.User = user;
                                 roundNumber = 1;
@@ -191,22 +193,6 @@ namespace RpsGame_NoDB
                             }
                             else
                             {
-                                // Console.WriteLine("Players List:");
-                                // foreach (Player player1 in players)
-                                // {
-                                //     Console.WriteLine($"Player: {player1.PlayerId} | Player Name: {player1.FirstName}");
-                                // }
-                                // Console.WriteLine("Rounds List:");
-                                // foreach (Round round1 in rounds)
-                                // {
-                                //     Console.WriteLine($"Round: {round1.RoundId}");
-                                // }
-                                // Console.WriteLine("Matches List:");
-                                // foreach (Match match1 in matches)
-                                // {
-                                //     Console.WriteLine($"Match ID: {match1.MatchId} | Match winner: {match1.MatchWinner().FirstName}");
-                                // }
-                                Console.WriteLine($"\nTotal matches played: {matches.Count}");
                                 Console.WriteLine("\nGood bye.");
                                 break;
                             }
@@ -232,7 +218,7 @@ namespace RpsGame_NoDB
                 {
                     if (pl.FirstName == p.FirstName && pl.LastName == p.LastName)
                     {
-                        Console.WriteLine("User already exists. Logging In.");
+                        Console.WriteLine("\nUser already exists. Logging In.");
                         return true;
                     }
                 }
@@ -241,18 +227,18 @@ namespace RpsGame_NoDB
 
             void PrintStats()
             {
-                Console.WriteLine("\nRounds List:");
+                Console.WriteLine("\nRound Winner List:");
                 int counter = 1;
-                foreach (Round round1 in rounds)
+                foreach (Round r in rounds)
                 {
 
-                    if (round1.WinningPlayer == null)
+                    if (r.WinningPlayer == null)
                     {
                         Console.WriteLine($"Round #{counter}: Was a tie");
                     }
                     else
                     {
-                        Console.WriteLine($"Round #{counter}: {round1.WinningPlayer.FirstName}");
+                        Console.WriteLine($"Round #{counter}: {r.WinningPlayer.FirstName}");
                     }
                     counter++;
                 }
