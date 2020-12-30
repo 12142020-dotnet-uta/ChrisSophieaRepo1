@@ -144,9 +144,7 @@ namespace P0_ChrisSophiea
                                     total += inventory1.Item1.ItemPrice * quantity;
                                     break;
                                 }
-                                // db.ReduceInventory(inventory1, quantity);
-                                // cart.Add(inventory1.Item1);
-                                // total += inventory1.Item1.ItemPrice * quantity;
+
                             } while (quantity < 0 || quantity > inventory1.InventoryAmount);
 
 

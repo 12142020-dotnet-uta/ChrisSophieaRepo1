@@ -14,6 +14,12 @@ namespace P0_ChrisSophiea
         {
             this.db = context;
         }
+
+        /// <summary>
+        /// Adds a customer to the database and returns the Customer object.
+        /// </summary>
+        /// <param name="c">Customer c</param>
+        /// <returns>Returns the customer that was created and added to the database.</returns>
         public Customer AddCustomer(Customer c)
         {
             Customer customer = db.customers.Where(x => x.EmailAddress == c.EmailAddress).FirstOrDefault();
@@ -30,6 +36,10 @@ namespace P0_ChrisSophiea
             return db.customers.Where(x => x.EmailAddress == c.EmailAddress).First();
         }
 
+        /// <summary>
+        /// Deletes the given Customer c from the database.
+        /// </summary>
+        /// <param name="c">Customer c</param>
         public void DeleteCustomer(Customer c)
         {
 
@@ -45,12 +55,19 @@ namespace P0_ChrisSophiea
             db.SaveChanges();
         }
 
+        /// <summary>
+        /// Retrieves all customers from the database.
+        /// </summary>
+        /// <returns>Returns ICollection of all customers in the database.</returns>
         public ICollection<Customer> GetAllCustomers()
         {
             // db.SaveChanges();
             return db.customers.ToList();
         }
 
+        /// <summary>
+        /// Prints all the customers in the database.
+        /// </summary>
         public void PrintAllCustomers()
         {
 
@@ -61,6 +78,11 @@ namespace P0_ChrisSophiea
             // db.SaveChanges();
         }
 
+        /// <summary>
+        /// Returns ICollection of customers that have an email that matches the email address input parameter.
+        /// </summary>
+        /// <param name="email">string input parameter email</param>
+        /// <returns>Returns ICollection of Customers</returns>
         public ICollection<Customer> GetCustomersByEmail(string email)
         {
             ICollection<Customer> customers = new List<Customer>();
@@ -74,6 +96,12 @@ namespace P0_ChrisSophiea
             return customers;
         }
 
+        /// <summary>
+        /// Searches the database for Customers with First Name and Last Name input parameters.
+        /// </summary>
+        /// <param name="fname">string Fname. Customer's first name</param>
+        /// <param name="lname">string Lname. Customer's last name</param>
+        /// <returns>Returns ICollection of Customers that match First and Last Name given as input.</returns>
         public ICollection<Customer> GetCustomersByName(string fname, string lname)
         {
             ICollection<Customer> customers = new List<Customer>();
@@ -88,12 +116,13 @@ namespace P0_ChrisSophiea
             return customers;
         }
 
-        public ICollection<Purchase> CustomerPurchases(Customer customer)
-        {
-            return customer.Purchases;
-        }
-
-
+        /// <summary>
+        /// Updates Customer in the database given the original Customer and new Fname, new Lname and new Email.
+        /// </summary>
+        /// <param name="c">Customer c - original customer</param>
+        /// <param name="newfname">string newfname - new first name</param>
+        /// <param name="newlname">string newlname - new last name</param>
+        /// <param name="newemail">string newemail - new email</param>
         public void UpdateCustomer(Customer c, string newfname, string newlname, string newemail)
         {
             Customer customer = db.customers.Where(x => x.CustomerId == c.CustomerId).FirstOrDefault();
@@ -111,6 +140,13 @@ namespace P0_ChrisSophiea
             db.SaveChanges();
         }
 
+        /// <summary>
+        /// Add inventory to a store. Takes parameters Store, Item, and amount.
+        /// If inventory already exists, it increases the inventory amount by the given amount.
+        /// </summary>
+        /// <param name="store"></param>
+        /// <param name="item"></param>
+        /// <param name="amount"></param>
         public void AddInventory(Store store, Item item, int amount)
         {
             Inventory i = new Inventory();
@@ -138,6 +174,11 @@ namespace P0_ChrisSophiea
             db.SaveChanges();
         }
 
+        /// <summary>
+        /// Gets ICollection of Inventory objects from a Store given as an input parameter.
+        /// </summary>
+        /// <param name="store">Store s</param>
+        /// <returns>ICollection of Inventories</returns>
         public ICollection<Inventory> GetInventory(Store store)
         {
 
@@ -153,6 +194,13 @@ namespace P0_ChrisSophiea
             //db.SaveChanges();
             return allInventory;
         }
+
+        /// <summary>
+        /// Gets ICollection of Inventories of a specific item type from a Store.
+        /// </summary>
+        /// <param name="store">Store store</param>
+        /// <param name="itemType">string itemType - category of item</param>
+        /// <returns>ICollection of Inventories</returns>
         public ICollection<Inventory> GetInventoryByType(Store store, string itemType)
         {
 
@@ -170,6 +218,11 @@ namespace P0_ChrisSophiea
             return inventories;
         }
 
+        /// <summary>
+        /// Get Inventory based on it's Inventory ID.
+        /// </summary>
+        /// <param name="Id">int id - Inventory Id</param>
+        /// <returns>Return Inventory object</returns>
         public Inventory GetInventoryById(int Id)
         {
 
@@ -185,6 +238,10 @@ namespace P0_ChrisSophiea
             return inventory;
         }
 
+        /// <summary>
+        /// Prints out all the inventories from a given store.
+        /// </summary>
+        /// <param name="store">Store store</param>
         public void PrintAllInventory(Store store)
         {
 
@@ -199,6 +256,11 @@ namespace P0_ChrisSophiea
 
         }
 
+        /// <summary>
+        /// Prints out all inventories from a store of a specific item type.
+        /// </summary>
+        /// <param name="store">Store s</param>
+        /// <param name="type">string type - item type</param>
         public void PrintInventoryByType(Store store, string type)
         {
 
@@ -213,6 +275,12 @@ namespace P0_ChrisSophiea
             //db.SaveChanges();
 
         }
+
+        /// <summary>
+        /// Reduces the quantity of inventory given the inventory and amount.
+        /// </summary>
+        /// <param name="i">Inventory i</param>
+        /// <param name="amount">int amount - amount to reduce available inventory</param>
         public void ReduceInventory(Inventory i, int amount)
         {
             Inventory inventory = new Inventory();
@@ -232,6 +300,10 @@ namespace P0_ChrisSophiea
 
         }
 
+        /// <summary>
+        /// Adds an item to the database.
+        /// </summary>
+        /// <param name="i">Item i</param>
         public void AddItem(Item i)
         {
             Item item = new Item();
@@ -248,6 +320,10 @@ namespace P0_ChrisSophiea
             db.SaveChanges();
         }
 
+        /// <summary>
+        /// Deletes an item from the database.
+        /// </summary>
+        /// <param name="i">Item i</param>
         public void DeleteItem(Item i)
         {
             Item item = new Item();
@@ -263,24 +339,43 @@ namespace P0_ChrisSophiea
             db.SaveChanges();
         }
 
+        /// <summary>
+        /// Get an Item based on the given Item ID.
+        /// </summary>
+        /// <param name="id">int id</param>
+        /// <returns>Item</returns>
         public Item GetItemById(int id)
         {
 
             return db.items.Where(x => x.ItemId == id).FirstOrDefault();
         }
 
+        /// <summary>
+        /// Returns a List of all Items in the database.
+        /// </summary>
+        /// <returns>List of all items in database</returns>
         public List<Item> GetAllItems()
         {
             //db.SaveChanges();
             return db.items.ToList();
         }
 
+        /// <summary>
+        /// Returns a list of all items of a specific type.
+        /// </summary>
+        /// <param name="type">string type - item type</param>
+        /// <returns>List of Items</returns>
         public List<Item> GetItemsByType(string type)
         {
             //db.SaveChanges();
             return db.items.Where(x => x.ItemType == type).ToList();
         }
 
+        /// <summary>
+        /// Returns a list of items with a specific name.
+        /// </summary>
+        /// <param name="itemName">string itemName - name of the item</param>
+        /// <returns>List of Items</returns>
         public List<Item> GetItemsByName(string itemName)
         {
 
@@ -296,6 +391,13 @@ namespace P0_ChrisSophiea
             return itemsListByName;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="newItemName"></param>
+        /// <param name="newItemDescrition"></param>
+        /// <param name="newItemPrice"></param>
         public void UpdateItem(Item i, string newItemName, string newItemDescrition, double newItemPrice)
         {
 
@@ -314,6 +416,10 @@ namespace P0_ChrisSophiea
             db.SaveChanges();
         }
 
+        /// <summary>
+        /// Adds a purchase to the database.
+        /// </summary>
+        /// <param name="p">Purchase p</param>
         public void AddPurchase(Purchase p)
         {
             Purchase purchase = new Purchase();
@@ -339,7 +445,10 @@ namespace P0_ChrisSophiea
 
         }
 
-
+        /// <summary>
+        /// Deletes a given purchase from the Database.
+        /// </summary>
+        /// <param name="p">Purchase p</param>
         public void DeletePurchase(Purchase p)
         {
 
@@ -356,11 +465,20 @@ namespace P0_ChrisSophiea
 
         }
 
+        /// <summary>
+        /// Get all purchases from the database.
+        /// </summary>
+        /// <returns>ICollection of purchases</returns>
         public ICollection<Purchase> GetAllPurchases()
         {
             return db.purchases.ToList();
         }
 
+        /// <summary>
+        /// Get all purchases made by a specific customer.
+        /// </summary>
+        /// <param name="c">Customer c</param>
+        /// <returns>ICollection of Purchases</returns>
         public ICollection<Purchase> GetPurchasesByCustomer(Customer c)
         {
             ICollection<Purchase> purchaseListByCustomer = new List<Purchase>();
@@ -374,6 +492,11 @@ namespace P0_ChrisSophiea
             return purchaseListByCustomer;
         }
 
+        /// <summary>
+        /// Get all purchases made at a specific store.
+        /// </summary>
+        /// <param name="store">Store store</param>
+        /// <returns>ICollection of Purchases</returns>
         public ICollection<Purchase> GetPurchasesByStore(Store store)
         {
             ICollection<Purchase> purchaseListByStore = new List<Purchase>();
@@ -387,6 +510,11 @@ namespace P0_ChrisSophiea
             return purchaseListByStore;
         }
 
+        /// <summary>
+        /// Get all purchases with a specific item in it.
+        /// </summary>
+        /// <param name="item">Item item</param>
+        /// <returns>ICollection of Purchases</returns>
         public ICollection<Purchase> GetPurchasesByItem(Item item)
         {
             ICollection<Purchase> purchaseListByItem = new List<Purchase>();
@@ -404,6 +532,10 @@ namespace P0_ChrisSophiea
         }
 
 
+        /// <summary>
+        /// Add a Store to the database.
+        /// </summary>
+        /// <param name="s">Store s</param>
         public void AddStore(Store s)
         {
             Store store = new Store();
@@ -420,6 +552,10 @@ namespace P0_ChrisSophiea
             db.SaveChanges();
         }
 
+        /// <summary>
+        /// Delete a store from the database.
+        /// </summary>
+        /// <param name="s">Store s</param>
         public void DeleteStore(Store s)
         {
             Store store = new Store();
@@ -436,6 +572,10 @@ namespace P0_ChrisSophiea
             db.SaveChanges();
         }
 
+        /// <summary>
+        /// Get a list of all the stores in the database.
+        /// </summary>
+        /// <returns>ICollection of Stores</returns>
         public ICollection<Store> GetAllStores()
         {
             ICollection<Store> stores = new List<Store>();
@@ -446,6 +586,9 @@ namespace P0_ChrisSophiea
             return stores;
         }
 
+        /// <summary>
+        /// Prints all the stores in the database.
+        /// </summary>
         public void PrintAllStores()
         {
             foreach (Store s in db.stores.ToList())
@@ -454,6 +597,11 @@ namespace P0_ChrisSophiea
             }
         }
 
+        /// <summary>
+        /// Gets a store with the given address.
+        /// </summary>
+        /// <param name="s">string s - store address</param>
+        /// <returns>Store</returns>
         public Store GetStoreByAddress(string s)
         {
             Store store = new Store();
@@ -467,6 +615,11 @@ namespace P0_ChrisSophiea
             return store;
         }
 
+        /// <summary>
+        /// Gets the store with the given store ID.
+        /// </summary>
+        /// <param name="id">int id - store ID</param>
+        /// <returns>Store</returns>
         public Store GetStoreById(int id)
         {
             Store store = new Store();
@@ -480,17 +633,23 @@ namespace P0_ChrisSophiea
             return store;
         }
 
+        /// <summary>
+        /// Gets a store based on the given phone number.
+        /// </summary>
+        /// <param name="p">string p - phone number</param>
+        /// <returns>Store</returns>
         public Store GetStoreByPhone(string p)
         {
             Store store = db.stores.Where(x => x.PhoneNumber == p).FirstOrDefault();
             return store;
         }
 
-        public ICollection<Inventory> GetInventoriesByStore(Store store)
-        {
-            return store.Inventories;
-        }
-
+        /// <summary>
+        /// Update a store in the database given the store, a new address and new phone #.
+        /// </summary>
+        /// <param name="s">Store s</param>
+        /// <param name="address">string address - store address</param>
+        /// <param name="phone">string phone - store phone #</param>
         public void UpdateStore(Store s, string address, string phone)
         {
             Store store = new Store();
