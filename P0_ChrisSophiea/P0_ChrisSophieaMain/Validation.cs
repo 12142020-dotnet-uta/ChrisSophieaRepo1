@@ -7,6 +7,11 @@ namespace P0_ChrisSophiea
     public class Validation
     {
         DAOMethodsImpl db = new DAOMethodsImpl();
+        /// <summary>
+        /// Validates the input for the Main Menu. 
+        /// Repeats the menu until input is valid.
+        /// </summary>
+        /// <returns>Returns the main menu response (int)</returns>
         public int vMainMenu()
         {
             int mainResponse;
@@ -20,12 +25,16 @@ namespace P0_ChrisSophiea
                 {
                     Console.WriteLine("\nInvalid Response. Please select from menu above");
                 }
-                // string logInOrQuit = Console.ReadLine();
-                // bool logInOrQuitBool = int.TryParse(logInOrQuit, out logInOrQuitInt);
             } while (mainResponse != 1 && mainResponse != 2 && mainResponse != 3);// loop runs till the user selects 1 or 2
             return mainResponse;
         }
 
+        /// <summary>
+        /// Validates the Login Menu input and uses it to create a new user. 
+        /// Repeats the menu until input is valid.
+        /// Returns that user.
+        /// </summary>
+        /// <returns>Customer</returns>
         public Customer vLoginMenu()
         {
             Customer user = null;
@@ -35,19 +44,21 @@ namespace P0_ChrisSophiea
                 Console.WriteLine("Enter First Name, Last Name, Email");
                 Console.Write("\tFirst Name: ");
                 string fnameEntered = Console.ReadLine();
-                Console.Write("\tLast Name: ");
-                string lnameEntered = Console.ReadLine();
-                Console.Write("\tEmail: ");
-                string emailEntered = Console.ReadLine();
                 if (!(fnameEntered is string) || fnameEntered.Length < 2 || fnameEntered.Length > 50)
                 {
                     Console.WriteLine("\nFirst Name entered isn't valid.");
+                    continue;
                 }
-                else if (!(lnameEntered is string) || lnameEntered.Length < 2 || lnameEntered.Length > 50)
+                Console.Write("\tLast Name: ");
+                string lnameEntered = Console.ReadLine();
+                if (!(lnameEntered is string) || lnameEntered.Length < 2 || lnameEntered.Length > 50)
                 {
                     Console.WriteLine("\nLast Name entered isn't valid.");
+                    continue;
                 }
-                else if (!(emailEntered is string) || emailEntered.Length < 7 || fnameEntered.Length > 50 || !(emailEntered.Contains("@")))
+                Console.Write("\tEmail: ");
+                string emailEntered = Console.ReadLine();
+                if (!(emailEntered is string) || emailEntered.Length < 7 || fnameEntered.Length > 50 || !(emailEntered.Contains("@")))
                 {
                     Console.WriteLine("\nEmail entered is not valid.");
                 }
@@ -65,6 +76,11 @@ namespace P0_ChrisSophiea
 
         }
 
+
+        /// <summary>
+        /// Validates the customer menu input. Repeats the menu until input is valid.
+        /// </summary>
+        /// <returns></returns>
         public int vCustomerMenu()
         {
             int menuResponse;
@@ -82,6 +98,13 @@ namespace P0_ChrisSophiea
             return menuResponse;
         }
 
+        /// <summary>
+        /// Creates the Store Selection menu. Gives all available stores and their Id.
+        /// Gives an option to logout.
+        /// Repeats menu until input is valid.
+        /// Returns the store based on the selected store Id.
+        /// </summary>
+        /// <returns>Store</returns>
         public Store vStoreMenu()
         {
             int storeResponse;
@@ -111,6 +134,11 @@ namespace P0_ChrisSophiea
             return db.GetStoreById(storeResponse);
         }
 
+        /// <summary>
+        /// Creates the Item Category menu. Validates the input from the customer.
+        /// Repeats the menu until input is valid.
+        /// </summary>
+        /// <returns>Returns the users selection of category menu (int)</returns>
         public int vItemCategoryMenu()
         {
             int categoryResponse;
@@ -125,12 +153,18 @@ namespace P0_ChrisSophiea
                 {
                     Console.WriteLine("Invalid Response. Please select from menu above");
                 }
-                // string logInOrQuit = Console.ReadLine();
-                // bool logInOrQuitBool = int.TryParse(logInOrQuit, out logInOrQuitInt);
+
             } while (categoryResponse < 1 || categoryResponse > 6);// loop runs till the user selects 1 or 2
             return categoryResponse;
         }
 
+        /// <summary>
+        /// Takes ICollection of inventories as an input and prints them out.
+        /// Validates that the user selected an available item or typed check out or back.
+        /// Repeats the menu until input is valid.
+        /// </summary>
+        /// <param name="inventory">ICollection of Inventories</param>
+        /// <returns>shop menu selection(string)</returns>
         public string vShopMenu(ICollection<Inventory> inventory)
         {
             List<int> inventoryIds = new List<int>();

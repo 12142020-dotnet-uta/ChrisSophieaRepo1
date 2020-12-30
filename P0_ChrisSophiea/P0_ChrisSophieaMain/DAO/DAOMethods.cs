@@ -11,7 +11,6 @@ namespace P0_ChrisSophiea
         public Store GetStoreByAddress(string address);
         public Store GetStoreByPhone(string phone);
         public ICollection<Purchase> GetPurchasesByStore(Store store);
-        public ICollection<Inventory> GetInventoriesByStore(Store store);
 
         public void AddStore(Store s);
         public void DeleteStore(Store s);
@@ -34,7 +33,6 @@ namespace P0_ChrisSophiea
         public ICollection<Customer> GetAllCustomers();
         public ICollection<Customer> GetCustomersByName(string fname, string lname);
         public ICollection<Customer> GetCustomersByEmail(string email);
-        public ICollection<Purchase> CustomerPurchases(Customer customer);
 
         public Customer AddCustomer(Customer c);
         public void DeleteCustomer(Customer c);
