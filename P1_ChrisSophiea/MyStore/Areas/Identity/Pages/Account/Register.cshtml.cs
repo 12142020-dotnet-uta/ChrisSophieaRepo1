@@ -77,7 +77,7 @@ namespace MyStore.Areas.Identity.Pages.Account
             public string FullName { get; set; }
 
             [Display(Name = "Default Store")]
-            public int DefaultStoreId { get; set; }
+            public int? DefaultStoreId { get; set; } = 0;
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -102,7 +102,16 @@ namespace MyStore.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, FullName = Input.FullName, DefaultStoreId = Input.DefaultStoreId};
+                var user = new ApplicationUser();
+                if (Input.DefaultStoreId == 0)
+                {
+                    user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, FullName = Input.FullName};
+                }
+                else
+                {
+                    user = new ApplicationUser { UserName = Input.Email, Email = Input.Email, FullName = Input.FullName, DefaultStoreId = (int)Input.DefaultStoreId };
+                }
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
@@ -115,7 +124,7 @@ namespace MyStore.Areas.Identity.Pages.Account
                         await _userManager.AddToRoleAsync(user, WC.CustomerRole);
                     }
 
-                _logger.LogInformation("User created a new account with password.");
+                    _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -134,8 +143,15 @@ namespace MyStore.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        if (!User.IsInRole(WC.AdminRole))
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            return LocalRedirect(returnUrl);
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index");
+                        }
                     }
                 }
                 foreach (var error in result.Errors)
@@ -143,7 +159,11 @@ namespace MyStore.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-
+            StoreSelectList = _db.Store.Select(i => new SelectListItem
+            {
+                Text = i.StoreAddress,
+                Value = i.StoreId.ToString()
+            });
             // If we got this far, something failed, redisplay form
             return Page();
         }

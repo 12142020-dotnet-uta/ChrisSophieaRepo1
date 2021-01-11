@@ -32,7 +32,7 @@ namespace MyStore.Controllers
             if (claim != null)
             {
                 ApplicationUser applicationUser = _db.ApplicationUser.FirstOrDefault(i => i.Id == claim.Value);
-                if(applicationUser.DefaultStoreId != 0)
+                if(applicationUser.DefaultStoreId != 0 && applicationUser.DefaultStoreId != null)
                 {
                     return RedirectToAction("Index", "ViewInventory", new { id = applicationUser.DefaultStoreId });
                 }

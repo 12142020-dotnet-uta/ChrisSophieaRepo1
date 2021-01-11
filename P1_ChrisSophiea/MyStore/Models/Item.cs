@@ -23,9 +23,9 @@ namespace MyStore.Models
         public string ItemName { get; set; }
 
         [Display(Name = "Item Category")]
+        [Required]
         public int ItemCategoryId { get; set; }
         [ForeignKey("ItemCategoryId")]
-        [Required]
         public virtual ItemCategory ItemCategory { get; set; }
 
         [Display(Name = "Item Description")]
@@ -38,7 +38,6 @@ namespace MyStore.Models
         public double ItemPrice { get; set; }
 
         [Display(Name = "Item Image")]
-        [Required]
         public string ItemImage { get; set; }
 
         public virtual ICollection<Inventory> Inventories { get; set; }

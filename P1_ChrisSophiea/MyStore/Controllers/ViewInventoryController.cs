@@ -26,6 +26,7 @@ namespace MyStore.Controllers
             {
                 Inventories = _db.Inventory.Include(x => x.Item1).Include(x => x.Store1).Include(x => x.Item1.ItemCategory).Where(x => x.Store1Id == id),
                 ItemCategories = _db.ItemCategory,
+                Store = _db.Store.FirstOrDefault(x => x.StoreId == id),
             };
             return View(homeVM);
         }

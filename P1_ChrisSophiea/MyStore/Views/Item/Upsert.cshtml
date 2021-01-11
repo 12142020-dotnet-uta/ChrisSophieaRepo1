@@ -8,6 +8,10 @@
         title = "Edit Item";
         <input asp-for="Item.ItemId" hidden />
     }
+    @{
+        ViewData["Title"] = title;
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
     <div class="bg-dark p-3" style="border-radius:10px">
         <div class="form-group row">
             <h2 class="text-info pl-3">@title</h2>
