@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyStore.Data;
 
 namespace MyStore.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210111154647_applicationusernullupdate1")]
+    partial class applicationusernullupdate1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -376,7 +378,10 @@ namespace MyStore.Data.Migrations
                     b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("DefaultStoreId");
+                    b.Property<int?>("StoreId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("StoreId");
 
                     b.HasDiscriminator().HasValue("ApplicationUser");
                 });
@@ -502,7 +507,7 @@ namespace MyStore.Data.Migrations
                 {
                     b.HasOne("MyStore.Models.Store", "Store")
                         .WithMany()
-                        .HasForeignKey("DefaultStoreId");
+                        .HasForeignKey("StoreId");
 
                     b.Navigation("Store");
                 });

@@ -61,12 +61,12 @@ namespace MyStore.Controllers
         public IActionResult Upsert(ItemVM productVM)
         {
             var existingItem = _db.Item.AsNoTracking().FirstOrDefault(i => i.ItemName == productVM.Item.ItemName);
-            if (ModelState.IsValid && existingItem == null)
+            if (ModelState.IsValid)
             {
                 var files = HttpContext.Request.Form.Files;
                 string webRootPath = _webHostEnvironment.WebRootPath;
 
-                if (productVM.Item.ItemId == 0)
+                if (productVM.Item.ItemId == 0 && existingItem == null)
                 {
                     string upload = webRootPath + WC.ImagePath;
                     string fileName = Guid.NewGuid().ToString();
@@ -82,16 +82,15 @@ namespace MyStore.Controllers
                 }
                 else
                 {
-                    var objFromDb = _db.Item.AsNoTracking().FirstOrDefault(u => u.ItemId == productVM.Item.ItemId);
                     if (files.Count > 0)
                     {
                         string upload = webRootPath + WC.ImagePath;
                         string fileName = Guid.NewGuid().ToString();
                         string extension = Path.GetExtension(files[0].FileName);
 
-                        if (objFromDb.ItemImage != null)
+                        if (existingItem.ItemImage != null)
                         {
-                            var oldFile = Path.Combine(upload, objFromDb.ItemImage);
+                            var oldFile = Path.Combine(upload, existingItem.ItemImage);
                             if (System.IO.File.Exists(oldFile))
                             {
                                 System.IO.File.Delete(oldFile);
@@ -108,7 +107,7 @@ namespace MyStore.Controllers
                     }
                     else
                     {
-                        productVM.Item.ItemImage = objFromDb.ItemImage;
+                        productVM.Item.ItemImage = existingItem.ItemImage;
                     }
                     _db.Item.Update(productVM.Item);
 

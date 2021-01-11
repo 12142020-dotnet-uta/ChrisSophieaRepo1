@@ -1,5 +1,8 @@
 ﻿@model MyStore.Models.Item
-
+@{
+    ViewData["Title"] = "Delete Item";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
 <form method="post">
 
@@ -86,5 +89,5 @@
     @{
         <partial name="_ValidationScriptsPartial" />
     }
- 
+
 }

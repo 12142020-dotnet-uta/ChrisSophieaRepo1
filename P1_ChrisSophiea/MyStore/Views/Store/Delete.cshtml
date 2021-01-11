@@ -1,5 +1,8 @@
 ﻿@model MyStore.Models.Store
-
+@{
+    ViewData["Title"] = "Delete Store";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
 <form method="post">
     <input asp-for="StoreId" hidden />

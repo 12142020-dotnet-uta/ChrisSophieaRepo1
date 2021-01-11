@@ -12,12 +12,12 @@ namespace MyStore.Models
     {
             [Display(Name = "Full Name")]
             public string FullName { get; set; }
-            
+
             [Display(Name = "Default Store")]
-            public int DefaultStoreId { get; set; }
+            public int? DefaultStoreId { get; set; }
             
             [ForeignKey("DefaultStoreId")]
-            public virtual Store Store { get; set; }
+            public virtual Store? Store { get; set; }
 
     }
 }
