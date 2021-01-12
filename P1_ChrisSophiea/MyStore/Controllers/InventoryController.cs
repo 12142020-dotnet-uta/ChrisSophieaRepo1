@@ -1,30 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using MyStore.Data;
-using MyStore.Models;
-using MyStore.Models.ViewModels;
+using DataAccess;
+using Models;
+using Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataAccess.Repository;
 
 namespace MyStore.Controllers
 {
     public class InventoryController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly IInventoryRepository _inventoryRepository;
 
-        public InventoryController(ApplicationDbContext db)
+        public InventoryController(IInventoryRepository inventoryRepository)
         {
-            _db = db;
+           _inventoryRepository = inventoryRepository;
         }
         public IActionResult Index()
         {
             InventoryVM inventoryVM = new InventoryVM()
             {
-                Inventories = _db.Inventory.Include(i => i.Store1).Include(i => i.Item1),
-                Stores = _db.Store
+                Inventories = _inventoryRepository.GetAllInventories(),
+                Stores = _inventoryRepository.GetAllStores()
             };
             return View(inventoryVM);            
         }
@@ -34,12 +35,12 @@ namespace MyStore.Controllers
             CreateInventoryVM inventoryVM = new CreateInventoryVM()
             {
                 Inventory = new Inventory(),
-                StoreSelectList = _db.Store.Select(i => new SelectListItem
+                StoreSelectList = _inventoryRepository.GetAllStores().Select(i => new SelectListItem
                 {
                     Text = i.StoreAddress,
                     Value = i.StoreId.ToString()
                 }),
-                ItemSelectList = _db.Item.Select(i => new SelectListItem
+                ItemSelectList = _inventoryRepository.GetAllItems().Select(i => new SelectListItem
                 {
                     Text = i.ItemName,
                     Value = i.ItemId.ToString()
@@ -52,7 +53,7 @@ namespace MyStore.Controllers
             }
             else
             {
-                inventoryVM.Inventory = _db.Inventory.Find(id);
+                inventoryVM.Inventory = _inventoryRepository.GetInventoryById((int)id);
                 if (inventoryVM.Inventory == null) { return NotFound(); }
             }
             return View(inventoryVM);
@@ -63,21 +64,24 @@ namespace MyStore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(CreateInventoryVM inventoryVM)
         {
-            //&& 
-            var existingInventory = _db.Inventory.AsNoTracking().FirstOrDefault(u => u.Store1Id == inventoryVM.Inventory.Store1Id && u.Item1Id == inventoryVM.Inventory.Item1Id);
+            Inventory inventory = inventoryVM.Inventory;
+            int storeId = inventory.Store1Id;
+            int itemId = inventory.Item1Id;
+            
+
+            var existingInventory = _inventoryRepository.GetInventoryByStoreItemIds(storeId,itemId);
             if (ModelState.IsValid && existingInventory==null)
             {
-                _db.Inventory.Add(inventoryVM.Inventory);
-                _db.SaveChanges();
+                _inventoryRepository.CreateAddInventory(inventory);
                 return RedirectToAction("Index");
 
             }
-            inventoryVM.StoreSelectList = _db.Store.Select(i => new SelectListItem
+            inventoryVM.StoreSelectList = _inventoryRepository.GetAllStores().Select(i => new SelectListItem
             {
                 Text = i.StoreAddress,
                 Value = i.StoreId.ToString()
             });
-            inventoryVM.ItemSelectList = _db.Item.Select(i => new SelectListItem
+            inventoryVM.ItemSelectList = _inventoryRepository.GetAllItems().Select(i => new SelectListItem
             {
                 Text = i.ItemName,
                 Value = i.ItemId.ToString()
@@ -93,7 +97,7 @@ namespace MyStore.Controllers
             {
                 return NotFound();
             }
-            var obj = _db.Inventory.Include(x=>x.Store1).Include(x => x.Item1).FirstOrDefault(x=>x.InventoryId == id);
+            var obj = _inventoryRepository.GetInventoryById((int)id);
             if (obj == null)
             {
                 return NotFound();
@@ -108,8 +112,7 @@ namespace MyStore.Controllers
         {
             if (ModelState.IsValid)
             {
-                _db.Inventory.Update(obj);
-                _db.SaveChanges();
+                _inventoryRepository.UpdateInventory(obj);
                 return RedirectToAction("Index");
             }
 
@@ -124,7 +127,7 @@ namespace MyStore.Controllers
             {
                 return NotFound();
             }
-            Inventory inventory = _db.Inventory.Include(a => a.Store1).Include(x=>x.Item1).FirstOrDefault(a => a.InventoryId == id);
+            Inventory inventory = _inventoryRepository.GetInventoryById((int)id);
             if (inventory == null)
             {
                 return NotFound();
@@ -137,14 +140,13 @@ namespace MyStore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePost(int? id)
         {
-            var obj = _db.Inventory.Find(id);
+            var obj = _inventoryRepository.GetInventoryById((int)id);
             if (obj == null)
             {
                 return NotFound();
             }
-            _db.Inventory.Remove(obj);
-            _db.SaveChanges();
 
+            _inventoryRepository.DeleteInventory(obj);
 
             return RedirectToAction("Index");
         }

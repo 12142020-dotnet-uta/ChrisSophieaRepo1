@@ -1,9 +1,10 @@
-﻿@model MyStore.Models.ViewModels.DetailVM
+﻿@model Models.ViewModels.DetailVM
 @{ int qty = 1; }
 @{
     ViewData["Title"] = Model.Inventory.Item1.ItemName;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@using Utility; 
 <div class="">
     <input asp-for="@Model.Inventory.InventoryId" hidden />
     <form method="post">

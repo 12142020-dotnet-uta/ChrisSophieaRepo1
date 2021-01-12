@@ -2,31 +2,33 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using MyStore.Data;
-using MyStore.Models;
-using MyStore.Models.ViewModels;
+using DataAccess;
+using Models;
+using Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Utility;
+using DataAccess.Repository;
 
 namespace MyStore.Controllers
 {
     public class ItemController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly IItemRepository _itemRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ItemController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment)
+        public ItemController(IItemRepository itemRepository, IWebHostEnvironment webHostEnvironment)
         {
-            _db = db;
+            _itemRepository = itemRepository;
             _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
         {
-            IEnumerable<Item> objList = _db.Item.Include(i=>i.ItemCategory);
+            IEnumerable<Item> objList = _itemRepository.GetAllItems();
             return View(objList);
         }
 
@@ -36,7 +38,7 @@ namespace MyStore.Controllers
             ItemVM productVM = new ItemVM()
             {
                 Item = new Item(),
-                CategorySelectList = _db.ItemCategory.Select(i => new SelectListItem
+                CategorySelectList = _itemRepository.GetAllItemCategories().Select(i => new SelectListItem
                 {
                     Text = i.CategoryName,
                     Value = i.Id.ToString()
@@ -49,7 +51,7 @@ namespace MyStore.Controllers
             }
             else
             {
-                productVM.Item = _db.Item.Find(id);
+                productVM.Item = _itemRepository.FindItemById((int)id);
                 if (productVM.Item == null) { return NotFound(); }
             }
             return View(productVM);
@@ -60,7 +62,9 @@ namespace MyStore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Upsert(ItemVM productVM)
         {
-            var existingItem = _db.Item.AsNoTracking().FirstOrDefault(i => i.ItemName == productVM.Item.ItemName);
+            Item item = productVM.Item;
+            var existingItem = _itemRepository.GetItemByName(item.ItemName);
+
             if (ModelState.IsValid)
             {
                 var files = HttpContext.Request.Form.Files;
@@ -77,7 +81,7 @@ namespace MyStore.Controllers
                         files[0].CopyTo(fileStream);
                     }
                     productVM.Item.ItemImage = fileName + extension;
-                    _db.Item.Add(productVM.Item);
+                    _itemRepository.CreateAddItem(item);
 
                 }
                 else
@@ -109,14 +113,13 @@ namespace MyStore.Controllers
                     {
                         productVM.Item.ItemImage = existingItem.ItemImage;
                     }
-                    _db.Item.Update(productVM.Item);
+                    _itemRepository.UpdateItem(item);
 
                 }
-                _db.SaveChanges();
                 return RedirectToAction("Index");
 
             }
-            productVM.CategorySelectList = _db.Item.Select(i => new SelectListItem
+            productVM.CategorySelectList = _itemRepository.GetAllItems().Select(i => new SelectListItem
             {
                 Text = i.ItemName,
                 Value = i.ItemId.ToString()
@@ -132,7 +135,7 @@ namespace MyStore.Controllers
             {
                 return NotFound();
             }
-            Item product = _db.Item.Include(a => a.ItemCategory).FirstOrDefault(a => a.ItemId == id);
+            Item product = _itemRepository.GetItemById((int)id);
             if (product == null)
             {
                 return NotFound();
@@ -145,7 +148,7 @@ namespace MyStore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePost(int? id)
         {
-            var obj = _db.Item.Find(id);
+            var obj = _itemRepository.FindItemById((int)id);
             if (obj == null)
             {
                 return NotFound();
@@ -160,8 +163,7 @@ namespace MyStore.Controllers
                 System.IO.File.Delete(oldFile);
             }
 
-            _db.Item.Remove(obj);
-            _db.SaveChanges();
+            _itemRepository.DeleteItem(obj);
 
 
             return RedirectToAction("Index");

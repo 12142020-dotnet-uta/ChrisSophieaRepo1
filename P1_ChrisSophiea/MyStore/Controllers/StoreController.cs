@@ -1,26 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MyStore.Data;
-using MyStore.Models;
+using DataAccess;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataAccess.Repository;
 
 namespace MyStore.Controllers
 {
     public class StoreController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly IStoreRepository _storeRepository;
 
-        public StoreController(ApplicationDbContext db)
+        public StoreController(IStoreRepository storeRepository)
         {
-            _db = db;
+            _storeRepository = storeRepository;
         }
 
         public IActionResult Index()
         {
-            IEnumerable<Store> objList = _db.Store;
+            IEnumerable<Store> objList = _storeRepository.GetAllStores();
             return View(objList);
         }
 
@@ -35,11 +36,10 @@ namespace MyStore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Store obj)
         {
-            var existingStore = _db.Store.AsNoTracking().FirstOrDefault(i => i.StoreAddress == obj.StoreAddress);
+            var existingStore = _storeRepository.GetStoreByAddress(obj.StoreAddress);
             if (ModelState.IsValid && existingStore == null)
             {
-                _db.Store.Add(obj);
-                _db.SaveChanges();
+                _storeRepository.CreateAddStore(obj);
                 return RedirectToAction("Index");
             }
 
@@ -53,7 +53,7 @@ namespace MyStore.Controllers
             {
                 return NotFound();
             }
-            var obj = _db.Store.Find(id);
+            var obj = _storeRepository.FindStoreById((int)id);
             if (obj == null)
             {
                 return NotFound();
@@ -66,11 +66,12 @@ namespace MyStore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Store obj)
         {
-            var existingStore = _db.Store.AsNoTracking().FirstOrDefault(i => i.StoreAddress == obj.StoreAddress && i.PhoneNumber == obj.PhoneNumber);
+            string address = obj.StoreAddress;
+            string phone = obj.PhoneNumber;
+            var existingStore = _storeRepository.GetStoreByAP(address, phone);
             if (ModelState.IsValid && existingStore == null)
             {
-                _db.Store.Update(obj);
-                _db.SaveChanges();
+                _storeRepository.UpdateStore(obj);
                 return RedirectToAction("Index");
             }
 
@@ -84,7 +85,7 @@ namespace MyStore.Controllers
             {
                 return NotFound();
             }
-            var obj = _db.Store.Find(id);
+            var obj = _storeRepository.FindStoreById((int)id);
             if (obj == null)
             {
                 return NotFound();
@@ -97,14 +98,13 @@ namespace MyStore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePost(int? id)
         {
-            var obj = _db.Store.Find(id);
+            var obj = _storeRepository.FindStoreById((int)id);
             if (obj == null)
             {
                 return NotFound();
             }
 
-            _db.Store.Remove(obj);
-            _db.SaveChanges();
+            _storeRepository.DeleteStore(obj);
 
 
             return RedirectToAction("Index");

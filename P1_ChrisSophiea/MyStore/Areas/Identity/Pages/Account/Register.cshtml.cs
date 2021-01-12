@@ -14,8 +14,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using MyStore.Data;
-using MyStore.Models;
+using DataAccess;
+using Models;
+using Utility;
 
 namespace MyStore.Areas.Identity.Pages.Account
 {
