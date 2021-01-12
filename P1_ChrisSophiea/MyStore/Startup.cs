@@ -7,7 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MyStore.Data;
+using DataAccess;
+using DataAccess.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,15 @@ namespace MyStore
                 Options.Cookie.HttpOnly = true;
                 Options.Cookie.IsEssential = true;
             });
+
+            services.AddScoped<ICartRepository, CartRepository>();
+            services.AddScoped<IHomeRepository, HomeRepository>();
+            services.AddScoped<IInventoryRepository, InventoryRepository>();
+            services.AddScoped<IItemCategoryRepository, ItemCategoryRepository>();
+            services.AddScoped<IItemRepository, ItemRepository>();
+            services.AddScoped<IStoreRepository, StoreRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IViewInventoryRepository, ViewInventoryRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

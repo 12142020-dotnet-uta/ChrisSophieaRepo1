@@ -1,26 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MyStore.Data;
-using MyStore.Models;
+using DataAccess;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataAccess.Repository;
 
 namespace MyStore.Controllers
 {
     public class ItemCategoryController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly IItemCategoryRepository _itemCategoryRepository;
 
-        public ItemCategoryController(ApplicationDbContext db)
+        public ItemCategoryController(IItemCategoryRepository itemCategoryRepository)
         {
-            _db = db;
+            _itemCategoryRepository = itemCategoryRepository;
         }
+
         public IActionResult Index()
         {
-            IEnumerable<ItemCategory> objList = _db.ItemCategory;
-            return View(objList);
+            IEnumerable<ItemCategory> itemCategoryList = _itemCategoryRepository.GetItemCategories();
+            return View(itemCategoryList);
         }
 
         //GET - CREATE
@@ -34,11 +36,10 @@ namespace MyStore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(ItemCategory obj)
         {
-            var existingCategory = _db.ItemCategory.AsNoTracking().FirstOrDefault(i => i.CategoryName == obj.CategoryName);
+            var existingCategory = _itemCategoryRepository.GetItemCategoryByName(obj.CategoryName);
             if (ModelState.IsValid && existingCategory==null)
             {
-                _db.ItemCategory.Add(obj);
-                _db.SaveChanges();
+                _itemCategoryRepository.CreateAddItemCategory(obj);
                 return RedirectToAction("Index");
             }
 
@@ -52,7 +53,7 @@ namespace MyStore.Controllers
             {
                 return NotFound();
             }
-            var obj = _db.ItemCategory.Find(id);
+            var obj = _itemCategoryRepository.GetItemCategoryById((int)id);
             if (obj == null)
             {
                 return NotFound();
@@ -65,11 +66,10 @@ namespace MyStore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(ItemCategory obj)
         {
-            var existingCategory = _db.ItemCategory.AsNoTracking().FirstOrDefault(i => i.CategoryName == obj.CategoryName);
+            var existingCategory = _itemCategoryRepository.GetItemCategoryByName(obj.CategoryName);
             if (ModelState.IsValid && existingCategory == null)
             {
-                _db.ItemCategory.Update(obj);
-                _db.SaveChanges();
+                _itemCategoryRepository.UpdateItemCategory(obj);
                 return RedirectToAction("Index");
             }
 
@@ -83,7 +83,8 @@ namespace MyStore.Controllers
             {
                 return NotFound();
             }
-            var obj = _db.ItemCategory.Find(id);
+
+            var obj = _itemCategoryRepository.GetItemCategoryById((int)id);
             if (obj == null)
             {
                 return NotFound();
@@ -96,15 +97,13 @@ namespace MyStore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePost(int? id)
         {
-            var obj = _db.ItemCategory.Find(id);
+            var obj = _itemCategoryRepository.GetItemCategoryById((int)id);
             if (obj == null)
             {
                 return NotFound();
             }
 
-            _db.ItemCategory.Remove(obj);
-            _db.SaveChanges();
-
+            _itemCategoryRepository.DeleteItemCategory(obj);
 
             return RedirectToAction("Index");
         }

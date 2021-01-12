@@ -1,7 +1,8 @@
 ﻿@page
-@model RegisterModel
+@model RegisterModel;
+@using Utility;
 
-@if (User.IsInRole(MyStore.WC.AdminRole))
+@if (User.IsInRole(WC.AdminRole))
 {
     <h1>Create an Admin account.</h1>
 }
@@ -43,7 +44,7 @@ else
                 <input asp-for="Input.ConfirmPassword" class="form-control" />
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
-            @if (User.IsInRole(MyStore.WC.AdminRole))
+            @if (User.IsInRole(WC.AdminRole))
             {
                 <button type="submit" class="btn btn-warning">Register Admin User</button>
             }

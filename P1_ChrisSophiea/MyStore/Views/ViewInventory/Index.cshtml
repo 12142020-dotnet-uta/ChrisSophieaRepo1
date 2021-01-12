@@ -1,4 +1,4 @@
-﻿@model MyStore.Models.ViewModels.HomeVM
+﻿@model Models.ViewModels.HomeVM
 @{
     ViewData["Title"] = Model.Store.StoreAddress;
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -17,7 +17,9 @@
     <div class="row">
         @foreach (var prod in Model.Inventories)
         {
-            <partial name="_IndividualProductCard" model="prod" />
+
+                <partial name="_IndividualProductCard" model="prod" />
+
         }
     </div>
 </div>
